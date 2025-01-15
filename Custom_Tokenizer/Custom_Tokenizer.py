@@ -79,6 +79,7 @@ class Custom_Tokenizer:
                 elif '-' not in word: # Если в слове нет '-'
                     if word not in self.Stopwords: # и если слово не является 'стоп-словом'
                         Extracted_Word_Lists[Author].append(word) # добавляем слово в список по ключу
+            print(f"'{Author}' - текст разделен на {len(Extracted_Word_Lists[Author])} слов.")
         return Extracted_Word_Lists # Возвращаем результирующий словарь (все тексты отфильтрованы и разбиты на слова)
 
     # Функция для извлечения частотного словаря
@@ -97,20 +98,24 @@ class Custom_Tokenizer:
         Temp_Frequency_Dictionary = sorted(Temp_Frequency_Dictionary.items(), key=lambda item: item[1], reverse=True)
         for index, (key, value) in enumerate(Temp_Frequency_Dictionary): # Извлекаем пары и их индексы
             Frequency_Dictionary[key] = index + 1  # Добавляем ключ и индекс пары +1 в результирующий словарь
+        print(f"В словаре {len(Frequency_Dictionary)} уникальных слов.")
         return Frequency_Dictionary  # Возвращаем результирующий словарь (значения - индексы пар из временного словаря )
 
-    # Функция для фильтрации нового текста, на основе частотного словаря исходного текста
+    # Функция для индексации
     def Dictionary_Based_Filtering(self, New_Texts, Frequency_Dictionary):
         # Результирующий список списков (слова проиндексированы)
         Indexed_Texts = []
-        for Text in New_Texts.values(): # Извлекаем Значение(Список слов) из словаря
+        for Author, Text in New_Texts.items(): # Извлекаем Значение(Список слов) из словаря
+            counter = 0
             Indexed_Text = [] # Инициализируем списком новый ключ словаря
             for word in Text: # Извлекаем слово из списка
                 if word in Frequency_Dictionary and Frequency_Dictionary[word] < self.Num_Words: # Если слово есть в словаре и значение < Num_Words
                     Indexed_Text.append(Frequency_Dictionary[word]) # добавляем индекс слова в список
                 else: # В остальных случаях
                     Indexed_Text.append(0) # добавляем в список 0
+                    counter += 1
             Indexed_Texts.append(Indexed_Text) # Добавляем список в список
+            print(f"'{Author}' - {counter} слов получили значение: 0")
         return Indexed_Texts # Результирующий список списков (слова проиндексированы)
     
     # Функция для приведения слов к лемме (на основе pymorphy2)
