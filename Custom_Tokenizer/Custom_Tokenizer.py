@@ -1,4 +1,4 @@
-import pymorphy2
+from pymystem3 import Mystem
 
 class Custom_Tokenizer:
     def __init__(self,
@@ -121,7 +121,7 @@ class Custom_Tokenizer:
     # Функция для приведения слов к лемме (на основе pymorphy2)
     def Rus_Reduce_to_Lemma(self, Extracted_Word_Lists):
         Lemmatized_Word_Lists = {} # Результирующий словарь (слова лемматизированны)
-        m = pymorphy2.MorphAnalyzer() # Объект для морфологического анализа слов
+        m = Mystem() # Объект для морфологического анализа слов
         cache = {} # 'Кэш' для оптимизации процесса
         for author, text in Extracted_Word_Lists.items(): # Извлекаем пары из исходного словаря
             Lemmatized_Word_Lists[author] = [] # Инициализируем списком новый ключ словаря
@@ -131,7 +131,8 @@ class Custom_Tokenizer:
                     lemmatized_word = cache[word] # используйем кэшированное значение
                 else: # если нет
                     try: # если при поиске не возникло ошибок
-                        lemmatized_word = m.parse(word)[0].normal_form # Извлекаем наиболее вероятный разбор
+                        lemma = m.lemmatize(word) # Извлекаем наиболее вероятный разбор
+                        lemmatized_word = lemma[0]
                         cache[word] = lemmatized_word  # Сохраняем слово в кэш
                     except Exception as e: # если возникла ошибка
                         print(f"Ошибка при лемматизации слова '{word}': {e}") # Информируем пользователя
